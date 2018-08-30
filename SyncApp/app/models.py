@@ -8,6 +8,8 @@ class Organization(db.Model):
     ein = db.Column(db.String(60), index=True, unique=True)
     website = db.Column(db.String(180), index=True)
 
+    profiles = db.relationship("Profile", back_populates="organization")
+
     def __repr__(self):
         return '<Organization {}>'.format(self.name, self.org_id)
 
@@ -18,6 +20,8 @@ class Profile(db.Model):
     time_stamp = db.Column(db.DateTime, default=datetime.utcnow)
     website = db.Column(db.String(180))
     primary = db.Column(db.Boolean, unique=False, default=False)
+
+    organization = relationship("Organization", back_populates="profiles")
 
     def __repr__(self):
         return '<Profile {}>'.format(
