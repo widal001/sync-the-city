@@ -22,7 +22,7 @@ class Profile(db.Model):
     website = db.Column(db.String(180))
     primary = db.Column(db.Boolean, unique=False, default=False)
 
-    organization = relationship('Organization', back_populates='profiles')
+    organization = db.relationship('Organization', back_populates='profiles')
 
     def __repr__(self):
         return '<Profile {}>'.format(
@@ -53,7 +53,9 @@ class Tag_Item(db.Model):
     organization = db.relationship('Organization', back_populates='tags')
 
     def __repr__(self):
-
+        return 'Tag_Item {}'.format(
+        self.org_id, self.tag_id
+        )
 
 class Resource(db.Model):
     __tablename__ = 'resource'
