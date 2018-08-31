@@ -9,7 +9,9 @@ class Organization(db.Model):
     website = db.Column(db.String(180), index=True)
 
     profiles = db.relationship('Profile', back_populates='organization')
-    tags = db.relationship('Tag_Item', back_populates='organization')
+    tags = db.relationship('Tag_Item', back_populates='organizations')
+    responses = db.relationship('Response', back_populates='organization')
+    resources = db.relationship('Inventory', 'back_populates')
 
     def __repr__(self):
         return '<Organization {}>'.format(self.name, self.org_id)
@@ -35,7 +37,7 @@ class Tag(db.Model):
     type = db.Column(db.Integer, index=True)
     name = db.Column(db.String(80), index=True)
 
-    organizations = db.relationship('Tag_Item', back_populates='tag')
+    organizations = db.relationship('Tag_Item', back_populates='tags')
 
     def __repr__(self):
         return '<Tag {}>'.format(
@@ -63,17 +65,47 @@ class Resource(db.Model):
     type = db.Column(db.Integer, index=True)
     name = db.Column(db.String(80), index=True)
 
+    organizations = db.relationship('Inventory', back_populates='resources')
+
     def __repr__(self):
         return '<Resource {}>'.format(
         self.resource_id, self.type, self.name
         )
 
+class Inventory(db.Model):
+    __tablename__ = 'inventory'
+    inventory_id = db.Column(db.Integer, primary_key=True)
+    org_id = db.Column(db.Integer, ForeignKey('organization.org_id'))
+    resource_id = db.Column(db.Integer, ForeignKey('resource.resource_id'))
+
+    resource = db.relationship('Resource', back_populates='organizations')
+    organization = db.relationship('Organization', back_populates='resources')
+
+    def __repr__(self):
+        return '<'
+
+
 class Question(db.Model):
     __tablename__ = 'question'
-    inventory_id = db.Column(db.Integer, primary_key=True)
+    question_id = db.Column(db.Integer, primary_key=True)
     question_text = db.Column(db.String(255))
+
+    responses = db.relationship('Response', back_populates='question')
 
     def __repr__(self):
         return  '<Question {}>'.format(
-        self.inventory_id, self.question_text
+        self.question_id, self.question_text
         )
+
+class Response(db.Model):
+    __tablename__ = 'response'
+    response_id = db.Column(db.Integer, primary_key=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organization.org_id'))
+    question_id = db.Column(db.Integer, db.ForeignKey('question.question_id'))
+    response_text = db.Column(db.String(64000))
+
+    question = db.relationship('Question', back_populates='responses')
+    organization = db.relationship('Organization', back_populates='responses')
+
+    def __repr__(self):
+        return '<Response >'
