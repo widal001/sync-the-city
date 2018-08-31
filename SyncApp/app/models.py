@@ -8,7 +8,8 @@ class Organization(db.Model):
     ein = db.Column(db.String(60), index=True, unique=True)
     website = db.Column(db.String(180), index=True)
 
-    profiles = db.relationship("Profile", back_populates="organization")
+    profiles = db.relationship('Profile', back_populates='organization')
+    tags = db.relationship('Tag_Item', back_populates='organization')
 
     def __repr__(self):
         return '<Organization {}>'.format(self.name, self.org_id)
@@ -21,7 +22,7 @@ class Profile(db.Model):
     website = db.Column(db.String(180))
     primary = db.Column(db.Boolean, unique=False, default=False)
 
-    organization = relationship("Organization", back_populates="profiles")
+    organization = relationship('Organization', back_populates='profiles')
 
     def __repr__(self):
         return '<Profile {}>'.format(
@@ -34,10 +35,25 @@ class Tag(db.Model):
     type = db.Column(db.Integer, index=True)
     name = db.Column(db.String(80), index=True)
 
+    organizations = db.relationship('Tag_Item', back_populates='tag')
+
     def __repr__(self):
         return '<Tag {}>'.format(
         self.tag_id, self.type, self.name
         )
+
+class Tag_Item(db.Model):
+    __tablename__ = 'tag_item'
+    tag_item_id = db.Column(db.Integer, primary_key=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organization.org_id'))
+    tag_id = db.Column(db.Integer, db.ForeignKey('tag.tag_id'))
+    score = db.Column(db.Numeric(8,2))
+
+    tag = db.relationship('Tag', back_populates='organizations')
+    organization = db.relationship('Organization', back_populates='tags')
+
+    def __repr__(self):
+
 
 class Resource(db.Model):
     __tablename__ = 'resource'
