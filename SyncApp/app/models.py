@@ -26,11 +26,6 @@ class Profile(db.Model):
 
     organization = db.relationship('Organization', back_populates='profiles')
 
-    def __repr__(self):
-        return '<Profile {}>'.format(
-        self.org_id, self.time_stamp
-        )
-
 class Tag(db.Model):
     __tablename__ = 'tag'
     tag_id = db.Column(db.Integer, primary_key=True)
@@ -54,11 +49,6 @@ class Tag_Item(db.Model):
     tag = db.relationship('Tag', back_populates='organizations')
     organization = db.relationship('Organization', back_populates='tags')
 
-    def __repr__(self):
-        return 'Tag_Item {}'.format(
-        self.org_id, self.tag_id
-        )
-
 class Resource(db.Model):
     __tablename__ = 'resource'
     resource_id = db.Column(db.Integer, primary_key=True)
@@ -75,15 +65,11 @@ class Resource(db.Model):
 class Inventory(db.Model):
     __tablename__ = 'inventory'
     inventory_id = db.Column(db.Integer, primary_key=True)
-    org_id = db.Column(db.Integer, ForeignKey('organization.org_id'))
-    resource_id = db.Column(db.Integer, ForeignKey('resource.resource_id'))
+    org_id = db.Column(db.Integer, db.ForeignKey('organization.org_id'))
+    resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
 
     resource = db.relationship('Resource', back_populates='organizations')
     organization = db.relationship('Organization', back_populates='resources')
-
-    def __repr__(self):
-        return '<'
-
 
 class Question(db.Model):
     __tablename__ = 'question'
@@ -108,4 +94,6 @@ class Response(db.Model):
     organization = db.relationship('Organization', back_populates='responses')
 
     def __repr__(self):
-        return '<Response >'
+        return '<Response {}>'.format(
+        self.question, self.organization, self.response_text
+        )
