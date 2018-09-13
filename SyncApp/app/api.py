@@ -19,8 +19,10 @@ class OrganizationList(Resource):
         {'Org_Id': 'org2'}
         ]
 
-    def post(self):
-        pass
+    def post(self, data):
+        db.session.add_all([
+        Organization(name=entry.name,ein=entry.ein)for entry in data
+        ])
 
     def delete(self):
         pass

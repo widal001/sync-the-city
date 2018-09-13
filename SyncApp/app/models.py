@@ -6,7 +6,6 @@ class Organization(db.Model):
     org_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), index=True)
     ein = db.Column(db.String(60), index=True, unique=True)
-    website = db.Column(db.String(180), index=True)
 
     profiles = db.relationship('Profile', back_populates='organization')
     tags = db.relationship('Tag_Item', back_populates='organization')
@@ -23,6 +22,7 @@ class Profile(db.Model):
     time_stamp = db.Column(db.DateTime, default=datetime.utcnow)
     website = db.Column(db.String(180))
     primary = db.Column(db.Boolean, unique=False, default=False)
+    website = db.Column(db.String(180))
 
     organization = db.relationship('Organization', back_populates='profiles')
 
