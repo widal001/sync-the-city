@@ -21,6 +21,8 @@ class Profile(db.Model):
     org_id = db.Column(db.Integer, db.ForeignKey('organization.org_id'))
     time_stamp = db.Column(db.DateTime, default=datetime.utcnow)
     website = db.Column(db.String(180))
+    staff_size = db.Column(db.Integer)
+    budget = db.Column(db.Integer)
     primary = db.Column(db.Boolean, unique=False, default=False)
 
     organization = db.relationship('Organization', back_populates='profiles')
