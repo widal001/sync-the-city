@@ -22,7 +22,6 @@ class Profile(db.Model):
     time_stamp = db.Column(db.DateTime, default=datetime.utcnow)
     website = db.Column(db.String(180))
     primary = db.Column(db.Boolean, unique=False, default=False)
-    website = db.Column(db.String(180))
 
     organization = db.relationship('Organization', back_populates='profiles')
 

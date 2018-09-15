@@ -1,6 +1,7 @@
 from app import API, db
 from app.models import *
 from flask_restful import reqparse, abort, Resource
+from flask import request
 
 class OrganizationItem(Resource):
     def get(self, org_id):
@@ -19,10 +20,16 @@ class OrganizationList(Resource):
         {'Org_Id': 'org2'}
         ]
 
-    def post(self, data):
+    def post(self):
+
+        if not request.json:
+            abort(400)
+
         db.session.add_all([
-        Organization(name=entry.name,ein=entry.ein)for entry in data
+        Organization(name=x['name'],ein=x['ein'])for x in request.json
         ])
+        db.session.commit()
+        return request.json, 201
 
     def delete(self):
         pass
