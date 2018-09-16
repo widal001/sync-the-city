@@ -40,9 +40,9 @@ class Tag(db.Model):
         self.tag_id, self.type, self.name
         )
 
-class Tag_Item(db.Model):
+class Org_Tag(db.Model):
     __tablename__ = 'tag_item'
-    tag_item_id = db.Column(db.Integer, primary_key=True)
+    org_tag_id = db.Column(db.Integer, primary_key=True)
     org_id = db.Column(db.Integer, db.ForeignKey('organization.org_id'))
     tag_id = db.Column(db.Integer, db.ForeignKey('tag.tag_id'))
     score = db.Column(db.Numeric(8,2))
