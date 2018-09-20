@@ -8,7 +8,7 @@ class Organization(db.Model):
     ein = db.Column(db.String(60), index=True, unique=True)
 
     profiles = db.relationship('Profile', back_populates='organization')
-    tags = db.relationship('Tag_Item', back_populates='organization')
+    tags = db.relationship('Org_Tag', back_populates='organization')
     responses = db.relationship('Response', back_populates='organization')
     resources = db.relationship('Inventory', back_populates='organization')
 
@@ -33,7 +33,7 @@ class Tag(db.Model):
     type = db.Column(db.Integer, index=True)
     name = db.Column(db.String(80), index=True)
 
-    organizations = db.relationship('Tag_Item', back_populates='tag')
+    organizations = db.relationship('Org_Tag', back_populates='tag')
 
     def __repr__(self):
         return '<Tag {}>'.format(
@@ -41,7 +41,7 @@ class Tag(db.Model):
         )
 
 class Org_Tag(db.Model):
-    __tablename__ = 'tag_item'
+    __tablename__ = 'org_tag'
     org_tag_id = db.Column(db.Integer, primary_key=True)
     org_id = db.Column(db.Integer, db.ForeignKey('organization.org_id'))
     tag_id = db.Column(db.Integer, db.ForeignKey('tag.tag_id'))
