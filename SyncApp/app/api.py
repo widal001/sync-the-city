@@ -55,7 +55,7 @@ class ProfileItem(Resource):
             'ein': result.ein,
             'profile_id': result.profile_id,
             'website': result.website,
-            'buget': result.budget,
+            'budget': result.budget,
             'staff_size': result.staff_size
         }
         return result_dict, 201
