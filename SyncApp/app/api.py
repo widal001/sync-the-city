@@ -36,32 +36,58 @@ class OrganizationList(Resource):
 
 class ProfileItem(Resource):
 
-    def get(self, org_id):
-        result = (db.session.query(Organization.org_id,
-                                    Organization.name,
-                                    Organization.ein,
-                                    Profile.profile_id,
-                                    Profile.website,
-                                    Profile.budget,
-                                    Profile.staff_size)
-                             .join(Profile)
-                             .filter(Organization.org_id==org_id,
-                                     Profile.primary==True)
-                             .one())
+    profile_fields = {
+        'profile_id': fields.String,
+        'website': fields.String,
+        'staff_size': fields.Integer,
+        'budget': fields.Integer,
+        'primary': fields.Integer
+    }
 
-        result_dict = {
-            'org_id': result.org_id,
-            'name': result.name,
-            'ein': result.ein,
-            'profile_id': result.profile_id,
-            'website': result.website,
-            'budget': result.budget,
-            'staff_size': result.staff_size
-        }
-        return result_dict, 201
+    org_fields = {
+        'org_id': fields.Integer,
+        'name': fields.String(attribute='organization.name'),
+        'ein': fields.String(attribute='organization.ein'),
+        'profile': profile_fields
+    }
+
+    @marshal_with(org_fields)
+    def get(self, org_id):
+        result = (db.session.query(Profile)
+                             .filter(Profile.org_id==org_id,
+                                     Profile.primary==True)
+                             .first())
+
+        return result, 201
 
     def post(self, org_id):
         pass
+
+class ProfileList(Resource):
+
+    profile_fields = {
+        'profile_id': fields.String,
+        'website': fields.String,
+        'staff_size': fields.Integer,
+        'budget': fields.Integer,
+        'primary': fields.Integer
+    }
+
+    org_fields = {
+        'org_id': fields.Integer,
+        'name': fields.String(attribute='organization.name'),
+        'ein': fields.String(attribute='organization.ein'),
+        'profile': profile_fields
+    }
+
+    @marshal_with(org_fields)
+    def get(self):
+        result = (db.session.query(Profile)
+                             .filter(Profile.primary==True)
+                             .all())
+
+        return result, 201
+
 
 class ResourceItem(Resource):
     def get(self, resource_id):
@@ -90,3 +116,4 @@ API.add_resource(OrganizationItem, '/api/v1/organizations/<org_id>')
 API.add_resource(ProfileItem, '/api/v1/profiles/<org_id>')
 API.add_resource(ResourceList, '/api/v1/resources')
 API.add_resource(ResourceItem, '/api/v1/resources/<resource_id>')
+API.add_resource(ProfileList, '/api/v1/profiles')
