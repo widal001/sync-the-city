@@ -4,30 +4,48 @@ from flask_restful import abort, Resource, fields, marshal_with
 from flask import request
 
 class OrganizationItem(Resource):
-    def get(self, org_id):
-        return {'Org_Id': 'org1'}
+    org_fields = {
+        'name': fields.String,
+        'ein': fields.String,
+        'org_id': fields.Integer
+    }
 
+    @marshal_with(org_fields)
+    def get(self, org_id):
+        result = Organization.query.get(org_id)
+        return result, 201
+
+    @marshal_with(org_fields)
     def put(self, org_id):
-        pass
+        if not request.json:
+            abort(400)
+        org = Organization.query.get(org_id)
+        for k,v in request.json.items():
+            setattr(org, k, v)
+        db.session.commit()
+        result = Organization.query.get(org_id)
+        return result, 201
 
     def delete(self, org_id):
         pass
 
 class OrganizationList(Resource):
+    org_fields = {
+        'name': fields.String,
+        'ein': fields.String,
+        'org_id': fields.Integer
+    }
+
+    @marshal_with(org_fields)
     def get(self):
-        return [
-        {'Org_Id': 'org1'},
-        {'Org_Id': 'org2'}
-        ]
+        result = db.session.query(Organization).all()
+        return result, 201
 
     def post(self):
-
         if not request.json:
             abort(400)
-
-        db.session.add_all([
-        Organization(name=x['name'],ein=x['ein'])for x in request.json
-        ])
+        db.session.add_all([Organization(name=x['name'],ein=x['ein'])
+                            for x in request.json])
         db.session.commit()
         return request.json, 201
 
@@ -57,7 +75,6 @@ class ProfileItem(Resource):
                              .filter(Profile.org_id==org_id,
                                      Profile.primary==True)
                              .first())
-
         return result, 201
 
     def post(self, org_id):
