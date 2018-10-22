@@ -126,6 +126,41 @@ class ResourceList(Resource):
     def delete(self):
         pass
 
+class OrgItemFull(Resource):
+
+    profile_fields = {
+        'profile_id': fields.String,
+        'website': fields.String,
+        'staff_size': fields.Integer,
+        'budget': fields.Integer,
+        'primary': fields.Integer
+    }
+
+    proposal_fields = {
+        'prop_id': fields.Integer,
+        'type': fields.String,
+        'description': fields.String
+    }
+
+    org_fields = {
+        'name': fields.String,
+        'ein': fields.String,
+        'org_id': fields.Integer,
+        'profile': fields.Nested(profile_fields, attribute='current_profile'),
+        'requests': fields.Nested(proposal_fields),
+        'opportunities': fields.Nested(proposal_fields)
+    }
+
+    @marshal_with(org_fields)
+    def get(self, org_id):
+        result = Organization.query.get(org_id)
+        return result, 201
+
+    def post(self):
+        pass
+
+    def delete(self):
+        pass
 
 
 API.add_resource(OrganizationList, '/api/v1/organizations')
@@ -134,3 +169,4 @@ API.add_resource(ProfileItem, '/api/v1/profiles/<org_id>')
 API.add_resource(ResourceList, '/api/v1/resources')
 API.add_resource(ResourceItem, '/api/v1/resources/<resource_id>')
 API.add_resource(ProfileList, '/api/v1/profiles')
+API.add_resource(OrgItemFull, '/api/v1/organizations-full/<org_id>')

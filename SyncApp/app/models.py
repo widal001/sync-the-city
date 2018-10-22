@@ -8,9 +8,17 @@ class Organization(db.Model):
     ein = db.Column(db.String(60), index=True, unique=True)
 
     profiles = db.relationship('Profile', back_populates='organization')
+    current_profile = db.relationship('Profile',
+    primaryjoin="and_(Organization.org_id==Profile.org_id, Profile.primary)")
     tags = db.relationship('Org_Tag', back_populates='organization')
     responses = db.relationship('Response', back_populates='organization')
     resources = db.relationship('Inventory', back_populates='organization')
+    proposals = db.relationship('Proposal', foreign_keys="Proposal.org_id",
+                                back_populates='organization')
+    requests = db.relationship('Proposal',
+    primaryjoin="and_(Organization.org_id==Proposal.org_id, Proposal.type=='Request')")
+    opportunities = db.relationship('Proposal',
+    primaryjoin="and_(Organization.org_id==Proposal.org_id, Proposal.type=='Opportunity')")
 
     def __repr__(self):
         return '<Organization {}>'.format(self.name, self.org_id)
@@ -98,3 +106,14 @@ class Response(db.Model):
         return '<Response {}>'.format(
         self.question, self.organization, self.response_text
         )
+
+class Proposal(db.Model):
+    __tablename__ = 'proposal'
+    prop_id = db.Column(db.Integer, primary_key=True)
+    org_id = db.Column(db.Integer, db.ForeignKey('organization.org_id'))
+    type = db.Column(db.String(25))
+    date_due = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    description = db.Column(db.String(64000))
+
+    organization = db.relationship('Organization')
